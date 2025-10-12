@@ -1,8 +1,9 @@
 import { motion } from 'framer-motion';
-import { Users, BookOpen, ClipboardCheck, Award, TrendingUp, Bell, Calendar } from 'lucide-react';
+import { Users, BookOpen, ClipboardCheck, Award, TrendingUp, Bell, Calendar, Plus } from 'lucide-react';
 import Card from '../components/Card';
 import Chart from '../components/Chart';
 import { useUser } from '../contexts/UserContext';
+import { useNotifications } from '../contexts/NotificationContext';
 
 const teacherInfo = {
   subject: 'Mathematics',
@@ -44,6 +45,18 @@ const recentActivities = [
 
 export default function TeacherDashboard() {
   const { user } = useUser();
+  const { addNotification } = useNotifications();
+
+  const testNotification = () => {
+    const messages = [
+      { title: 'Student Submitted Assignment', message: 'John Doe submitted Math assignment', type: 'info' as const, category: 'push' as const },
+      { title: 'Class Average Improved', message: '10-A average increased by 5%', type: 'success' as const, category: 'reports' as const },
+      { title: 'Parent Meeting Request', message: 'Mrs. Johnson requested a meeting', type: 'warning' as const, category: 'email' as const },
+      { title: 'Grading Reminder', message: '15 assignments pending grading', type: 'warning' as const, category: 'push' as const },
+    ];
+    const random = messages[Math.floor(Math.random() * messages.length)];
+    addNotification(random);
+  };
 
   return (
     <div className="space-y-6">
@@ -60,6 +73,13 @@ export default function TeacherDashboard() {
           </p>
         </div>
         <div className="flex items-center gap-3">
+          <button
+            onClick={testNotification}
+            className="flex items-center gap-2 px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors text-sm"
+          >
+            <Plus className="w-4 h-4" />
+            Test Notification
+          </button>
           <div className="px-4 py-2 bg-blue-100 dark:bg-blue-900/20 rounded-lg">
             <p className="text-sm text-blue-700 dark:text-blue-400 font-medium">
               {teacherInfo.totalStudents} Total Students

@@ -1,8 +1,9 @@
 import { motion } from 'framer-motion';
-import { Users, GraduationCap, TrendingUp, Sparkles } from 'lucide-react';
+import { Users, GraduationCap, TrendingUp, Sparkles, Plus } from 'lucide-react';
 import Card from '../components/Card';
 import Chart from '../components/Chart';
 import { useUser } from '../contexts/UserContext';
+import { useNotifications } from '../contexts/NotificationContext';
 
 const statsData = [
   { icon: Users, label: 'Total Students', value: '2,847', change: '+12%', color: 'from-blue-500 to-cyan-500' },
@@ -29,18 +30,37 @@ const pieData = [
 
 export default function Dashboard() {
   const { user } = useUser();
+  const { addNotification } = useNotifications();
+
+  const testNotification = () => {
+    const messages = [
+      { title: 'New Student Enrolled', message: 'Emma Wilson joined Class 10-B', type: 'info' as const, category: 'push' as const },
+      { title: 'Assignment Submitted', message: '25 students submitted Math homework', type: 'success' as const, category: 'email' as const },
+      { title: 'Low Attendance Warning', message: 'Class 12-A attendance is 78%', type: 'warning' as const, category: 'attendance' as const },
+      { title: 'Report Generated', message: 'Weekly performance report is ready', type: 'success' as const, category: 'reports' as const },
+    ];
+    const random = messages[Math.floor(Math.random() * messages.length)];
+    addNotification(random);
+  };
   
   return (
     <div className="space-y-6">
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="flex items-center justify-between"
+        className="flex items-center justify-between flex-wrap gap-4"
       >
         <div>
           <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Dashboard</h1>
           <p className="text-gray-600 dark:text-gray-400 mt-1">Welcome back, {user?.name || 'Admin'}</p>
         </div>
+        <button
+          onClick={testNotification}
+          className="flex items-center gap-2 px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors text-sm"
+        >
+          <Plus className="w-4 h-4" />
+          Test Notification
+        </button>
       </motion.div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">

@@ -19,6 +19,7 @@ import TeacherGradeBook from './pages/teacher/GradeBook';
 import AiChatWidget from './components/AiChatWidget';
 import { UserProvider } from './contexts/UserContext';
 import { ThemeProvider } from './contexts/ThemeContext';
+import { NotificationProvider } from './contexts/NotificationContext';
 
 function AppContent({ darkMode, toggleDarkMode }: { darkMode: boolean; toggleDarkMode: () => void }) {
   const location = useLocation();
@@ -77,11 +78,13 @@ function App() {
 
   return (
     <ThemeProvider>
-      <UserProvider>
-        <BrowserRouter>
-          <AppContent darkMode={darkMode} toggleDarkMode={toggleDarkMode} />
-        </BrowserRouter>
-      </UserProvider>
+      <NotificationProvider>
+        <UserProvider>
+          <BrowserRouter>
+            <AppContent darkMode={darkMode} toggleDarkMode={toggleDarkMode} />
+          </BrowserRouter>
+        </UserProvider>
+      </NotificationProvider>
     </ThemeProvider>
   );
 }
