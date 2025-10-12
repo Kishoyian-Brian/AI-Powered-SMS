@@ -61,7 +61,7 @@ export default function Sidebar({ isTeacher = false }: SidebarProps) {
                   flex items-center gap-3 px-4 py-3 rounded-lg transition-all
                   ${
                     isActive
-                      ? 'bg-gradient-to-r from-blue-500 to-cyan-500 text-white shadow-lg'
+                      ? 'gradient-primary text-white shadow-lg'
                       : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
                   }
                 `}

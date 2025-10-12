@@ -26,7 +26,7 @@ export default function Navbar({ darkMode, toggleDarkMode }: NavbarProps) {
     >
       <div className="px-6 py-4 flex items-center justify-between">
         <div className="flex items-center gap-4 flex-1 max-w-2xl">
-          <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent">
+          <h1 className="text-2xl font-bold text-gradient" style={{ background: 'var(--gradient-primary)', WebkitBackgroundClip: 'text', backgroundClip: 'text', color: 'transparent' }}>
             AI-SMS
           </h1>
           <div className="hidden md:flex items-center flex-1 bg-gray-100 dark:bg-gray-700 rounded-lg px-4 py-2">
