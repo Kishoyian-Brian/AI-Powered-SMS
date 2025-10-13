@@ -2,7 +2,7 @@ import { BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Toolti
 
 interface ChartProps {
   type: 'bar' | 'pie';
-  data: any[];
+  data: Record<string, unknown>[];
   dataKey?: string;
   xKey?: string;
   colors?: string[];
