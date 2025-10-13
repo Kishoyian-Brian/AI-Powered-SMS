@@ -1,0 +1,283 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================
+// CORE MODELS
+// ============================================
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String
+  role      UserRole @default(STUDENT)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  student Student?
+  teacher Teacher?
+  admin   Admin?
+
+  @@map("users")
+}
+
+model Admin {
+  id         String   @id @default(uuid())
+  userId     String   @unique
+  name       String
+  phone      String?
+  schoolName String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("admins")
+}
+
+model Student {
+  id          String    @id @default(uuid())
+  userId      String    @unique
+  name        String
+  email       String
+  rollNo      String    @unique
+  phone       String?
+  dateOfBirth DateTime?
+  address     String?
+  classId     String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  // Relations
+  user        User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  class       Class?              @relation(fields: [classId], references: [id], onDelete: SetNull)
+  attendance  AttendanceRecord[]
+  grades      Grade[]
+  assignments StudentAssignment[]
+
+  @@map("students")
+}
+
+model Teacher {
+  id         String   @id @default(uuid())
+  userId     String   @unique
+  name       String
+  email      String
+  phone      String
+  subject    String
+  experience String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  // Relations
+  user        User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  classes     Class[]
+  assignments Assignment[]
+
+  @@map("teachers")
+}
+
+model Class {
+  id        String   @id @default(uuid())
+  name      String
+  subject   String
+  schedule  String
+  teacherId String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  teacher     Teacher?           @relation(fields: [teacherId], references: [id], onDelete: SetNull)
+  students    Student[]
+  attendance  AttendanceRecord[]
+  assignments Assignment[]
+
+  @@map("classes")
+}
+
+// ============================================
+// ATTENDANCE
+// ============================================
+
+model AttendanceRecord {
+  id        String           @id @default(uuid())
+  studentId String
+  classId   String?
+  date      DateTime
+  status    AttendanceStatus @default(PRESENT)
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
+
+  // Relations
+  student Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  class   Class?  @relation(fields: [classId], references: [id], onDelete: SetNull)
+
+  @@unique([studentId, date])
+  @@map("attendance_records")
+}
+
+// ============================================
+// ASSIGNMENTS & GRADES
+// ============================================
+
+model Assignment {
+  id          String   @id @default(uuid())
+  title       String
+  description String?
+  dueDate     DateTime
+  totalMarks  Int
+  classId     String
+  teacherId   String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  class              Class               @relation(fields: [classId], references: [id], onDelete: Cascade)
+  teacher            Teacher             @relation(fields: [teacherId], references: [id], onDelete: Cascade)
+  studentAssignments StudentAssignment[]
+
+  @@map("assignments")
+}
+
+model StudentAssignment {
+  id            String           @id @default(uuid())
+  assignmentId  String
+  studentId     String
+  submittedAt   DateTime?
+  marksObtained Int?
+  status        AssignmentStatus @default(PENDING)
+  feedback      String?
+  createdAt     DateTime         @default(now())
+  updatedAt     DateTime         @updatedAt
+
+  // Relations
+  assignment Assignment @relation(fields: [assignmentId], references: [id], onDelete: Cascade)
+  student    Student    @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@unique([assignmentId, studentId])
+  @@map("student_assignments")
+}
+
+model Grade {
+  id         String   @id @default(uuid())
+  studentId  String
+  subject    String
+  examType   String // "Midterm", "Final", "Quiz", etc.
+  marks      Int
+  totalMarks Int
+  grade      String? // "A", "B", "C", etc.
+  remarks    String?
+  examDate   DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  // Relations
+  student Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@map("grades")
+}
+
+// ============================================
+// REPORTS
+// ============================================
+
+model Report {
+  id          String     @id @default(uuid())
+  title       String
+  type        ReportType
+  generatedAt DateTime   @default(now())
+  data        Json
+  downloadUrl String?
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  @@map("reports")
+}
+
+// ============================================
+// AI ASSISTANT
+// ============================================
+
+model ChatMessage {
+  id        String        @id @default(uuid())
+  userId    String?
+  message   String
+  response  String
+  context   String?
+  sender    MessageSender @default(USER)
+  createdAt DateTime      @default(now())
+
+  @@map("chat_messages")
+}
+
+model AIInsight {
+  id          String          @id @default(uuid())
+  title       String
+  description String
+  priority    InsightPriority @default(MEDIUM)
+  category    InsightCategory
+  isActive    Boolean         @default(true)
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+
+  @@map("ai_insights")
+}
+
+// ============================================
+// ENUMS
+// ============================================
+
+enum UserRole {
+  ADMIN
+  TEACHER
+  STUDENT
+}
+
+enum AttendanceStatus {
+  PRESENT
+  ABSENT
+  LATE
+}
+
+enum AssignmentStatus {
+  PENDING
+  SUBMITTED
+  GRADED
+  LATE_SUBMISSION
+}
+
+enum ReportType {
+  MONTHLY
+  ATTENDANCE
+  PERFORMANCE
+  TEACHER
+  STUDENT
+  AI
+}
+
+enum MessageSender {
+  USER
+  AI
+}
+
+enum InsightPriority {
+  LOW
+  MEDIUM
+  HIGH
+}
+
+enum InsightCategory {
+  PERFORMANCE
+  ATTENDANCE
+  GENERAL
+}
