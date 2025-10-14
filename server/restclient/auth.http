@@ -1,0 +1,119 @@
+### Variables
+@baseUrl = http://localhost:3000
+@contentType = application/json
+
+### Register New Admin
+# @name register
+POST {{baseUrl}}/auth/register
+Content-Type: {{contentType}}
+
+{
+  "fullName": "Brian Kishoyian",
+  "email": "admin@sms.com",
+  "phone": "+254700866007",
+  "password": "@Admin123"
+}
+
+### Extract token from registration
+@authToken = {{register.response.body.token}}
+
+### Login
+# @name login
+POST {{baseUrl}}/auth/login
+Content-Type: {{contentType}}
+
+{
+  "email": "admin@sms.com",
+  "password": "@Admin123"
+}
+
+### Extract token from login
+@loginToken = {{login.response.body.token}}
+
+### Get Current User (using registration token)
+GET {{baseUrl}}/auth/me
+Authorization: Bearer {{authToken}}
+
+### Get Current User (using login token)
+GET {{baseUrl}}/auth/me
+Authorization: Bearer {{loginToken}}
+
+### Logout
+POST {{baseUrl}}/auth/logout
+Authorization: Bearer {{authToken}}
+Content-Type: {{contentType}}
+
+### Test Login with Wrong Password (Should Fail)
+POST {{baseUrl}}/auth/login
+Content-Type: {{contentType}}
+
+{
+  "email": "brian@example.com",
+  "password": "wrongpassword"
+}
+
+### Test Register with Duplicate Email (Should Fail)
+POST {{baseUrl}}/auth/register
+Content-Type: {{contentType}}
+
+{
+  "fullName": "Another User",
+  "email": "brian@example.com",
+  "phone": "+254712345679",
+  "password": "password123"
+}
+
+### Test Register with Invalid Email (Should Fail)
+POST {{baseUrl}}/auth/register
+Content-Type: {{contentType}}
+
+{
+  "fullName": "Test User",
+  "email": "invalidemail",
+  "phone": "+254712345679",
+  "password": "password123"
+}
+
+### Test Register with Short Password (Should Fail)
+POST {{baseUrl}}/auth/register
+Content-Type: {{contentType}}
+
+{
+  "fullName": "Test User",
+  "email": "test@example.com",
+  "phone": "+254712345679",
+  "password": "12345"
+}
+
+### Register Second Admin
+POST {{baseUrl}}/auth/register
+Content-Type: {{contentType}}
+
+{
+  "fullName": "John Doe",
+  "email": "john@example.com",
+  "phone": "+254798765432",
+  "password": "securepass123"
+}
+
+### Login as Second Admin
+POST {{baseUrl}}/auth/login
+Content-Type: {{contentType}}
+
+{
+  "email": "john@example.com",
+  "password": "securepass123"
+}
+
+### Register Student User
+# @name registerStudent
+POST {{baseUrl}}/auth/register
+Content-Type: {{contentType}}
+
+{
+  "fullName": "Student One",
+  "email": "student1@gmail.com",
+  "phone": "0786688007",
+  "password": "student123"
+}
+

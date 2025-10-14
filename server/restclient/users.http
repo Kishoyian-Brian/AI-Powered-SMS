@@ -1,0 +1,136 @@
+### Variables
+@baseUrl = http://localhost:3000
+@contentType = application/json
+
+### First, login to get admin token
+# @name login
+POST {{baseUrl}}/auth/login
+Content-Type: {{contentType}}
+
+{
+  "email": "student1@gmail.com",
+  "password": "student123"
+}
+
+### Extract token
+@authToken = {{login.response.body.token}}
+@userId = {{login.response.body.user.id}}
+
+### Get All Users (Admin only)
+GET {{baseUrl}}/users
+Authorization: Bearer {{authToken}}
+
+### Get User by ID
+GET {{baseUrl}}/users/{{userId}}
+Authorization: Bearer {{authToken}}
+
+### Get Current User Profile
+GET {{baseUrl}}/users/me
+Authorization: Bearer {{authToken}}
+
+### Update User
+PATCH {{baseUrl}}/users/{{userId}}
+Authorization: Bearer {{authToken}}
+Content-Type: {{contentType}}
+
+{
+  "email": "student1updated@gmail.com"
+}
+
+### Delete User
+DELETE {{baseUrl}}/users/{{userId}}
+Authorization: Bearer {{authToken}}
+
+### Create a Student User (Admin only)
+POST {{baseUrl}}/users
+Authorization: Bearer {{authToken}}
+Content-Type: {{contentType}}
+
+{
+  "email": "student2@gmail.com",
+  "password": "password123",
+  "role": "STUDENT",
+  "name": "Jane Doe",
+  "rollNo": "S12345",
+  "phone": "0712345678",
+  "dateOfBirth": "2005-05-15"
+}
+
+### Create a Teacher User (Admin only)
+POST {{baseUrl}}/users
+Authorization: Bearer {{authToken}}
+Content-Type: {{contentType}}
+
+{
+  "email": "teacher1@gmail.com",
+  "password": "password123",
+  "role": "TEACHER",
+  "name": "John Smith",
+  "phone": "0723456789",
+  "subject": "Mathematics",
+  "experience": "5 years"
+}
+
+### Create an Admin User (Admin only)
+POST {{baseUrl}}/users
+Authorization: Bearer {{authToken}}
+Content-Type: {{contentType}}
+
+{
+  "email": "admin2@gmail.com",
+  "password": "password123",
+  "role": "ADMIN",
+  "name": "Admin Two",
+  "phone": "0734567890",
+  "schoolName": "Green Valley School"
+}
+
+### Search Users by Role
+GET {{baseUrl}}/users?role=STUDENT
+Authorization: Bearer {{authToken}}
+
+### Search Users by Email
+GET {{baseUrl}}/users?email=student
+Authorization: Bearer {{authToken}}
+
+### Test Unauthorized Access (No Token)
+GET {{baseUrl}}/users
+
+### Test Invalid Token
+GET {{baseUrl}}/users
+Authorization: Bearer invalid-token-here
+
+### Update User Password
+PATCH {{baseUrl}}/users/{{userId}}/password
+Authorization: Bearer {{authToken}}
+Content-Type: {{contentType}}
+
+{
+  "currentPassword": "student123",
+  "newPassword": "newpassword123"
+}
+
+### Bulk Create Users (Admin only)
+POST {{baseUrl}}/users/bulk
+Authorization: Bearer {{authToken}}
+Content-Type: {{contentType}}
+
+{
+  "users": [
+    {
+      "email": "student3@gmail.com",
+      "password": "password123",
+      "role": "STUDENT",
+      "name": "Student Three",
+      "rollNo": "S10003"
+    },
+    {
+      "email": "student4@gmail.com",
+      "password": "password123",
+      "role": "STUDENT",
+      "name": "Student Four",
+      "rollNo": "S10004"
+    }
+  ]
+}
+
