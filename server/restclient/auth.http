@@ -117,3 +117,60 @@ Content-Type: {{contentType}}
   "password": "student123"
 }
 
+### ============================================
+### PASSWORD RESET FLOW
+### ============================================
+
+### Step 1: Request Password Reset
+# @name forgotPassword
+POST {{baseUrl}}/auth/forgot-password
+Content-Type: {{contentType}}
+
+{
+  "email": "student1@gmail.com"
+}
+
+### Extract reset token (development only)
+@resetToken = {{forgotPassword.response.body.token}}
+
+### Step 2: Verify Reset Token
+GET {{baseUrl}}/auth/verify-reset-token?token={{resetToken}}
+
+### Step 3: Reset Password with Token
+POST {{baseUrl}}/auth/reset-password
+Content-Type: {{contentType}}
+
+{
+  "token": "{{resetToken}}",
+  "newPassword": "newpassword123"
+}
+
+### Step 4: Login with New Password
+POST {{baseUrl}}/auth/login
+Content-Type: {{contentType}}
+
+{
+  "email": "student1@gmail.com",
+  "password": "newpassword123"
+}
+
+### Test: Request Reset for Non-Existent Email (Should Not Reveal)
+POST {{baseUrl}}/auth/forgot-password
+Content-Type: {{contentType}}
+
+{
+  "email": "nonexistent@example.com"
+}
+
+### Test: Use Invalid Reset Token (Should Fail)
+POST {{baseUrl}}/auth/reset-password
+Content-Type: {{contentType}}
+
+{
+  "token": "invalid-token-12345",
+  "newPassword": "newpassword123"
+}
+
+### Test: Verify Invalid Token (Should Return Invalid)
+GET {{baseUrl}}/auth/verify-reset-token?token=invalid-token-12345
+
