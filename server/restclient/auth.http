@@ -174,3 +174,285 @@ Content-Type: {{contentType}}
 ### Test: Verify Invalid Token (Should Return Invalid)
 GET {{baseUrl}}/auth/verify-reset-token?token=invalid-token-12345
 
+### ============================================
+### EMAIL VERIFICATION FLOW
+### ============================================
+
+### Register a New User (Sends Verification Email)
+# @name registerWithVerification
+POST {{baseUrl}}/auth/register
+Content-Type: {{contentType}}
+
+{
+  "fullName": "John Test",
+  "email": "johntest@example.com",
+  "phone": "0700123456",
+  "password": "password123"
+}
+
+### Extract verification token (development only)
+@verificationToken = {{registerWithVerification.response.body.verificationToken}}
+
+### Step 1: Verify Email with Token
+POST {{baseUrl}}/auth/verify-email
+Content-Type: {{contentType}}
+
+{
+  "token": "{{verificationToken}}"
+}
+
+### Step 2: Login After Verification
+POST {{baseUrl}}/auth/login
+Content-Type: {{contentType}}
+
+{
+  "email": "johntest@example.com",
+  "password": "password123"
+}
+
+### Step 3: Resend Verification Email
+POST {{baseUrl}}/auth/resend-verification
+Content-Type: {{contentType}}
+
+{
+  "email": "johntest@example.com"
+}
+
+### Test: Verify with Invalid Token (Should Fail)
+POST {{baseUrl}}/auth/verify-email
+Content-Type: {{contentType}}
+
+{
+  "token": "invalid-verification-token-12345"
+}
+
+### Test: Resend to Already Verified Email
+POST {{baseUrl}}/auth/resend-verification
+Content-Type: {{contentType}}
+
+{
+  "email": "johntest@example.com"
+}
+
+### Test: Resend to Non-Existent Email (Should Not Reveal)
+POST {{baseUrl}}/auth/resend-verification
+Content-Type: {{contentType}}
+
+{
+  "email": "doesnotexist@example.com"
+}
+
+### ============================================
+### RATE LIMITING TESTS
+### ============================================
+
+### Test: Login Rate Limit (5 requests per 60s)
+### Try this 6 times in quick succession - 6th should fail with 429
+POST {{baseUrl}}/auth/login
+Content-Type: {{contentType}}
+
+{
+  "email": "test@example.com",
+  "password": "wrongpassword"
+}
+
+### Test: Register Rate Limit (3 requests per 60s)
+### Try this 4 times in quick succession - 4th should fail with 429
+POST {{baseUrl}}/auth/register
+Content-Type: {{contentType}}
+
+{
+  "fullName": "Rate Test User",
+  "email": "ratetest{{$randomInt}}@example.com",
+  "phone": "0700000{{$randomInt}}",
+  "password": "password123"
+}
+
+### Test: Forgot Password Rate Limit (3 requests per 60s)
+POST {{baseUrl}}/auth/forgot-password
+Content-Type: {{contentType}}
+
+{
+  "email": "test@example.com"
+}
+
+### Note: GET /auth/me has no rate limit (SkipThrottle)
+### This can be called unlimited times
+GET {{baseUrl}}/auth/me
+Authorization: Bearer {{authToken}}
+
+### ============================================
+### REFRESH TOKEN FLOW
+### ============================================
+
+### Step 1: Login and get tokens
+# @name loginForRefresh
+POST {{baseUrl}}/auth/login
+Content-Type: {{contentType}}
+
+{
+  "email": "student1@gmail.com",
+  "password": "mynewpassword123"
+}
+
+### Extract tokens
+@accessToken = {{loginForRefresh.response.body.accessToken}}
+@refreshToken = {{loginForRefresh.response.body.refreshToken}}
+
+### Step 2: Use access token (Should work)
+GET {{baseUrl}}/auth/me
+Authorization: Bearer {{accessToken}}
+
+### Step 3: Refresh the access token
+# @name refreshResponse
+POST {{baseUrl}}/auth/refresh
+Content-Type: {{contentType}}
+
+{
+  "refreshToken": "{{refreshToken}}"
+}
+
+### Extract new tokens
+@newAccessToken = {{refreshResponse.response.body.accessToken}}
+@newRefreshToken = {{refreshResponse.response.body.refreshToken}}
+
+### Step 4: Use new access token (Should work)
+GET {{baseUrl}}/auth/me
+Authorization: Bearer {{newAccessToken}}
+
+### Step 5: Try to use old refresh token (Should FAIL - token rotation)
+POST {{baseUrl}}/auth/refresh
+Content-Type: {{contentType}}
+
+{
+  "refreshToken": "{{refreshToken}}"
+}
+
+### Test: Invalid refresh token (Should fail)
+POST {{baseUrl}}/auth/refresh
+Content-Type: {{contentType}}
+
+{
+  "refreshToken": "invalid-refresh-token-12345"
+}
+
+### Test: Wait 16 minutes and access token will expire
+### (Access token expires in 15 minutes)
+### Then use refresh token to get a new one
+# Uncomment to test after 16 minutes
+# POST {{baseUrl}}/auth/refresh
+# Content-Type: {{contentType}}
+# 
+# {
+#   "refreshToken": "{{newRefreshToken}}"
+# }
+
+### ============================================
+### PASSWORD CHANGE FLOW
+### ============================================
+
+### Step 1: Login
+# @name loginForPasswordChange
+POST {{baseUrl}}/auth/login
+Content-Type: {{contentType}}
+
+{
+  "email": "student1@gmail.com",
+  "password": "mynewpassword123"
+}
+
+### Extract token
+@changePasswordToken = {{loginForPasswordChange.response.body.accessToken}}
+
+### Step 2: Change password (without revoking tokens)
+PATCH {{baseUrl}}/auth/change-password
+Authorization: Bearer {{changePasswordToken}}
+Content-Type: {{contentType}}
+
+{
+  "currentPassword": "mynewpassword123",
+  "newPassword": "updatedpassword456",
+  "revokeAllTokens": false
+}
+
+### Step 3: Login with new password
+POST {{baseUrl}}/auth/login
+Content-Type: {{contentType}}
+
+{
+  "email": "student1@gmail.com",
+  "password": "updatedpassword456"
+}
+
+### Step 4: Change password WITH token revocation
+# @name loginForRevoke
+POST {{baseUrl}}/auth/login
+Content-Type: {{contentType}}
+
+{
+  "email": "student1@gmail.com",
+  "password": "updatedpassword456"
+}
+
+@revokeToken = {{loginForRevoke.response.body.accessToken}}
+
+PATCH {{baseUrl}}/auth/change-password
+Authorization: Bearer {{revokeToken}}
+Content-Type: {{contentType}}
+
+{
+  "currentPassword": "updatedpassword456",
+  "newPassword": "finalpassword789",
+  "revokeAllTokens": true
+}
+
+### Test: Wrong current password (Should fail)
+# @name loginForWrongPassword
+POST {{baseUrl}}/auth/login
+Content-Type: {{contentType}}
+
+{
+  "email": "student1@gmail.com",
+  "password": "finalpassword789"
+}
+
+@wrongPassToken = {{loginForWrongPassword.response.body.accessToken}}
+
+PATCH {{baseUrl}}/auth/change-password
+Authorization: Bearer {{wrongPassToken}}
+Content-Type: {{contentType}}
+
+{
+  "currentPassword": "wrongpassword",
+  "newPassword": "newpassword123"
+}
+
+### Test: Same password as current (Should fail)
+PATCH {{baseUrl}}/auth/change-password
+Authorization: Bearer {{wrongPassToken}}
+Content-Type: {{contentType}}
+
+{
+  "currentPassword": "finalpassword789",
+  "newPassword": "finalpassword789"
+}
+
+### Test: Password too short (Should fail)
+PATCH {{baseUrl}}/auth/change-password
+Authorization: Bearer {{wrongPassToken}}
+Content-Type: {{contentType}}
+
+{
+  "currentPassword": "finalpassword789",
+  "newPassword": "123"
+}
+
+### Test: Unauthenticated request (Should fail)
+PATCH {{baseUrl}}/auth/change-password
+Content-Type: {{contentType}}
+
+{
+  "currentPassword": "finalpassword789",
+  "newPassword": "newpassword123"
+}
+

@@ -23,8 +23,11 @@ export interface AuthResponse {
     name: string;
     email: string;
     role: 'admin' | 'teacher' | 'student';
+    isEmailVerified?: boolean;
   };
-  token: string;
+  accessToken: string;
+  refreshToken: string;
+  expiresIn: number; // seconds
 }
 
 export const authService = {
@@ -34,9 +37,10 @@ export const authService = {
   login: async (credentials: LoginRequest): Promise<AuthResponse> => {
     const response = await api.post<AuthResponse>(API_ENDPOINTS.LOGIN, credentials);
     
-    // Store auth token
-    if (response.token) {
-      localStorage.setItem('authToken', response.token);
+    // Store tokens
+    if (response.accessToken) {
+      localStorage.setItem('authToken', response.accessToken);
+      localStorage.setItem('refreshToken', response.refreshToken);
     }
     
     return response;
@@ -48,9 +52,30 @@ export const authService = {
   register: async (data: RegisterRequest): Promise<AuthResponse> => {
     const response = await api.post<AuthResponse>(API_ENDPOINTS.REGISTER, data);
     
-    // Store auth token
-    if (response.token) {
-      localStorage.setItem('authToken', response.token);
+    // Store tokens
+    if (response.accessToken) {
+      localStorage.setItem('authToken', response.accessToken);
+      localStorage.setItem('refreshToken', response.refreshToken);
+    }
+    
+    return response;
+  },
+
+  /**
+   * Refresh access token
+   */
+  refreshToken: async (): Promise<AuthResponse> => {
+    const refreshToken = localStorage.getItem('refreshToken');
+    if (!refreshToken) {
+      throw new Error('No refresh token available');
+    }
+
+    const response = await api.post<AuthResponse>('/auth/refresh', { refreshToken });
+    
+    // Store new tokens
+    if (response.accessToken) {
+      localStorage.setItem('authToken', response.accessToken);
+      localStorage.setItem('refreshToken', response.refreshToken);
     }
     
     return response;
@@ -64,6 +89,7 @@ export const authService = {
       await api.post(API_ENDPOINTS.LOGOUT);
     } finally {
       localStorage.removeItem('authToken');
+      localStorage.removeItem('refreshToken');
       localStorage.removeItem('user');
     }
   },
@@ -87,6 +113,13 @@ export const authService = {
    */
   getToken: (): string | null => {
     return localStorage.getItem('authToken');
+  },
+
+  /**
+   * Get stored refresh token
+   */
+  getRefreshToken: (): string | null => {
+    return localStorage.getItem('refreshToken');
   },
 };
 

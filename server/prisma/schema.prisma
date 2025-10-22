@@ -15,18 +15,22 @@ datasource db {
 // ============================================
 
 model User {
-  id        String   @id @default(uuid())
-  email     String   @unique
-  password  String
-  role      UserRole @default(STUDENT)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id                String    @id @default(uuid())
+  email             String    @unique
+  password          String
+  role              UserRole  @default(STUDENT)
+  isEmailVerified   Boolean   @default(false)
+  emailVerifiedAt   DateTime?
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
 
   // Relations
-  student            Student?
-  teacher            Teacher?
-  admin              Admin?
-  passwordResetToken PasswordResetToken?
+  student                Student?
+  teacher                Teacher?
+  admin                  Admin?
+  passwordResetToken     PasswordResetToken?
+  emailVerificationToken EmailVerificationToken?
+  refreshTokens          RefreshToken[]
 
   @@map("users")
 }
@@ -189,7 +193,7 @@ model Grade {
 }
 
 // ============================================
-// PASSWORD RESET
+// PASSWORD RESET & EMAIL VERIFICATION
 // ============================================
 
 model PasswordResetToken {
@@ -203,6 +207,33 @@ model PasswordResetToken {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("password_reset_tokens")
+}
+
+model EmailVerificationToken {
+  id        String   @id @default(uuid())
+  userId    String   @unique
+  token     String   @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("email_verification_tokens")
+}
+
+model RefreshToken {
+  id        String   @id @default(uuid())
+  userId    String
+  token     String   @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  isRevoked Boolean  @default(false)
+
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("refresh_tokens")
 }
 
 // ============================================

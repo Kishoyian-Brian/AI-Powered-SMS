@@ -22,6 +22,10 @@ async function bootstrap() {
   const reflector = app.get(Reflector);
   app.useGlobalGuards(new JwtAuthGuard(reflector));
 
+  // Note: Rate limiting is configured globally via ThrottlerModule in app.module.ts
+  // Default: 10 requests per 60 seconds
+  // Auth endpoints: 5 requests per 60 seconds
+
   // Enable CORS for frontend integration
   app.enableCors({
     origin: process.env.CORS_ORIGIN || 'http://localhost:5173',
