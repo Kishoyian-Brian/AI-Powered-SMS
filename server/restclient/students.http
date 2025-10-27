@@ -1,0 +1,153 @@
+### Students API Testing
+
+# Variables
+@baseUrl = http://localhost:3000
+@token = your_jwt_token_here
+
+### 1. Create a new student
+POST {{baseUrl}}/students
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "name": "John Doe",
+  "email": "john.doe@student.com",
+  "rollNo": "STU001",
+  "phone": "1234567890",
+  "dateOfBirth": "2005-01-15",
+  "address": "123 Main St, City",
+  "password": "password123"
+}
+
+### 2. Create another student
+POST {{baseUrl}}/students
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "name": "Jane Smith",
+  "email": "jane.smith@student.com",
+  "rollNo": "STU002",
+  "phone": "0987654321",
+  "dateOfBirth": "2005-03-20",
+  "address": "456 Oak Ave, City",
+  "password": "password123"
+}
+
+### 3. Get all students (with pagination)
+GET {{baseUrl}}/students?page=1&limit=10
+Authorization: Bearer {{token}}
+
+### 4. Get all students with search
+GET {{baseUrl}}/students?search=John
+Authorization: Bearer {{token}}
+
+### 5. Get student by ID
+GET {{baseUrl}}/students/{{studentId}}
+Authorization: Bearer {{token}}
+
+### 6. Get student by roll number
+GET {{baseUrl}}/students/roll/STU001
+Authorization: Bearer {{token}}
+
+### 7. Get students by class
+GET {{baseUrl}}/students/class/{{classId}}
+Authorization: Bearer {{token}}
+
+### 8. Get student statistics
+GET {{baseUrl}}/students/stats
+Authorization: Bearer {{token}}
+
+### 9. Update student
+PATCH {{baseUrl}}/students/{{studentId}}
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "name": "John Updated Doe",
+  "phone": "1111111111",
+  "address": "789 New St, City"
+}
+
+### 10. Update student email
+PATCH {{baseUrl}}/students/{{studentId}}
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "email": "john.updated@student.com"
+}
+
+### 11. Update student roll number
+PATCH {{baseUrl}}/students/{{studentId}}
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "rollNo": "STU001UPDATED"
+}
+
+### 12. Assign student to class
+PATCH {{baseUrl}}/students/{{studentId}}
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "classId": "{{classId}}"
+}
+
+### 13. Remove student from class
+PATCH {{baseUrl}}/students/{{studentId}}
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "classId": null
+}
+
+### 14. Delete student (Admin only)
+DELETE {{baseUrl}}/students/{{studentId}}
+Authorization: Bearer {{token}}
+
+### 15. Test error cases
+
+### Try to create student with existing email
+POST {{baseUrl}}/students
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "name": "Duplicate Email",
+  "email": "john.doe@student.com",
+  "rollNo": "STU003",
+  "password": "password123"
+}
+
+### Try to create student with existing roll number
+POST {{baseUrl}}/students
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "name": "Duplicate Roll",
+  "email": "duplicate.roll@student.com",
+  "rollNo": "STU001",
+  "password": "password123"
+}
+
+### Try to get non-existent student
+GET {{baseUrl}}/students/00000000-0000-0000-0000-000000000000
+Authorization: Bearer {{token}}
+
+### Try to update non-existent student
+PATCH {{baseUrl}}/students/00000000-0000-0000-0000-000000000000
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "name": "Non-existent"
+}
+
+### Try to delete non-existent student
+DELETE {{baseUrl}}/students/00000000-0000-0000-0000-000000000000
+Authorization: Bearer {{token}}

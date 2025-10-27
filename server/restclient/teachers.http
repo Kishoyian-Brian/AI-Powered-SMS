@@ -1,0 +1,143 @@
+### Teachers Module API Tests
+### Base URL: http://localhost:3002
+
+### Variables
+@baseUrl = http://localhost:3002
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im1heG1pbGxpYW5tdWlydXJpQGdtYWlsLmNvbSIsInN1YiI6IjM4N2Q2NWNmLTVlYTctNGI3Ni05MmYwLWNjNTliNGM2YzY3NSIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc2MTE1ODAyMiwiZXhwIjoxNzYxMTU4OTIyfQ.ZMgAo04_LfHccXocqghA9LAgqvTchV4TLtuRKt4EjT8
+
+### 1. Create Teacher
+POST {{baseUrl}}/teachers
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "name": "Dr. Sarah Johnson",
+  "email": "sarah.johnson@teacher.com",
+  "phone": "1234567890",
+  "subject": "Mathematics",
+  "experience": "8 years",
+  "password": "password123"
+}
+
+### 2. Create Another Teacher
+POST {{baseUrl}}/teachers
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "name": "Prof. Michael Brown",
+  "email": "michael.brown@teacher.com",
+  "phone": "0987654321",
+  "subject": "Physics",
+  "experience": "12 years",
+  "password": "password123"
+}
+
+### 3. Create Third Teacher
+POST {{baseUrl}}/teachers
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "name": "Ms. Emily Davis",
+  "email": "emily.davis@teacher.com",
+  "phone": "5555555555",
+  "subject": "English Literature",
+  "experience": "5 years",
+  "password": "password123"
+}
+
+### 4. Get All Teachers
+GET {{baseUrl}}/teachers
+Authorization: Bearer {{token}}
+
+### 5. Get Teachers with Pagination
+GET {{baseUrl}}/teachers?page=1&limit=2
+Authorization: Bearer {{token}}
+
+### 6. Search Teachers by Name
+GET {{baseUrl}}/teachers?search=Sarah
+Authorization: Bearer {{token}}
+
+### 7. Search Teachers by Subject
+GET {{baseUrl}}/teachers?subject=Mathematics
+Authorization: Bearer {{token}}
+
+### 8. Get Teacher Statistics
+GET {{baseUrl}}/teachers/stats
+Authorization: Bearer {{token}}
+
+### 9. Get Teachers by Subject
+GET {{baseUrl}}/teachers/subject/Mathematics
+Authorization: Bearer {{token}}
+
+### 10. Get Teacher by ID (replace with actual ID from create response)
+GET {{baseUrl}}/teachers/REPLACE_WITH_ACTUAL_ID
+Authorization: Bearer {{token}}
+
+### 11. Get Teacher by Email
+GET {{baseUrl}}/teachers/email/sarah.johnson@teacher.com
+Authorization: Bearer {{token}}
+
+### 12. Update Teacher (replace with actual ID)
+PATCH {{baseUrl}}/teachers/REPLACE_WITH_ACTUAL_ID
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "name": "Dr. Sarah Johnson Updated",
+  "phone": "1111111111",
+  "experience": "10 years"
+}
+
+### 13. Test Duplicate Email Error
+POST {{baseUrl}}/teachers
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "name": "Duplicate Email",
+  "email": "sarah.johnson@teacher.com",
+  "phone": "9999999999",
+  "subject": "Chemistry",
+  "experience": "3 years",
+  "password": "password123"
+}
+
+### 14. Test Non-existent Teacher
+GET {{baseUrl}}/teachers/00000000-0000-0000-0000-000000000000
+Authorization: Bearer {{token}}
+
+### 15. Test Unauthorized Access (without token)
+GET {{baseUrl}}/teachers
+
+### 16. Delete Teacher (replace with actual ID)
+DELETE {{baseUrl}}/teachers/REPLACE_WITH_ACTUAL_ID
+Authorization: Bearer {{token}}
+
+### 17. Verify Teacher Deletion - Get Stats
+GET {{baseUrl}}/teachers/stats
+Authorization: Bearer {{token}}
+
+### 18. Test Teacher Login (to verify user account creation)
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "sarah.johnson@teacher.com",
+  "password": "password123"
+}
+
+### 19. Test Teacher Profile (as teacher user)
+GET {{baseUrl}}/teachers/me
+Authorization: Bearer TEACHER_TOKEN_HERE
+
+### 20. Test Update Teacher Profile (as teacher user)
+PATCH {{baseUrl}}/teachers/REPLACE_WITH_ACTUAL_ID
+Authorization: Bearer TEACHER_TOKEN_HERE
+Content-Type: application/json
+
+{
+  "phone": "2222222222",
+  "experience": "11 years"
+}
