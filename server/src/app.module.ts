@@ -8,6 +8,8 @@ import { UsersModule } from './users/users.module';
 import { PrismaModule } from './database/prisma.module';
 import { AuthModule } from './auth/auth.module';
 import { EmailModule } from './email/email.module';
+import { StudentsModule } from './students/students.module';
+import { TeachersModule } from './teachers/teachers.module';
 
 @Module({
   imports: [
@@ -32,6 +34,8 @@ import { EmailModule } from './email/email.module';
     EmailModule,
     UsersModule,
     AuthModule,
+    StudentsModule,
+    TeachersModule,
   ],
   controllers: [AppController],
   providers: [
