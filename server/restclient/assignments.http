@@ -1,0 +1,211 @@
+### Assignments Module API Tests
+### Base URL: http://localhost:3000
+
+### Variables
+@baseUrl = http://localhost:3000
+@token = YOUR_ADMIN_TOKEN_HERE
+@studentId = STUDENT_ID_HERE
+@classId = CLASS_ID_HERE
+@teacherId = TEACHER_ID_HERE
+
+### 1. Create Assignment
+POST {{baseUrl}}/assignments
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "title": "Mathematics Problem Set 1",
+  "description": "Solve the following algebraic equations and show your work",
+  "dueDate": "2025-11-05T23:59:59.000Z",
+  "totalMarks": 100,
+  "classId": "{{classId}}",
+  "teacherId": "{{teacherId}}"
+}
+
+### 2. Create Another Assignment
+POST {{baseUrl}}/assignments
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "title": "Physics Lab Report",
+  "description": "Write a detailed lab report on the pendulum experiment",
+  "dueDate": "2025-11-10T23:59:59.000Z",
+  "totalMarks": 50,
+  "classId": "{{classId}}",
+  "teacherId": "{{teacherId}}"
+}
+
+### 3. Get All Assignments
+GET {{baseUrl}}/assignments
+Authorization: Bearer {{token}}
+
+### 4. Get Assignments with Pagination
+GET {{baseUrl}}/assignments?page=1&limit=5
+Authorization: Bearer {{token}}
+
+### 5. Get Assignments by Class
+GET {{baseUrl}}/assignments/class/{{classId}}
+Authorization: Bearer {{token}}
+
+### 6. Get Assignments by Teacher
+GET {{baseUrl}}/assignments/teacher/{{teacherId}}
+Authorization: Bearer {{token}}
+
+### 7. Get Specific Assignment
+GET {{baseUrl}}/assignments/REPLACE_WITH_ACTUAL_ID
+Authorization: Bearer {{token}}
+
+### 8. Update Assignment
+PATCH {{baseUrl}}/assignments/REPLACE_WITH_ACTUAL_ID
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "title": "Updated Mathematics Problem Set 1",
+  "description": "Updated description with additional problems",
+  "totalMarks": 120
+}
+
+### 9. Create Student Assignment
+POST {{baseUrl}}/assignments/student-assignments
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "assignmentId": "REPLACE_WITH_ACTUAL_ASSIGNMENT_ID",
+  "studentId": "{{studentId}}"
+}
+
+### 10. Bulk Create Student Assignments
+POST {{baseUrl}}/assignments/student-assignments/bulk
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "assignmentId": "REPLACE_WITH_ACTUAL_ASSIGNMENT_ID",
+  "studentIds": ["{{studentId}}", "ANOTHER_STUDENT_ID"]
+}
+
+### 11. Get All Student Assignments
+GET {{baseUrl}}/assignments/student-assignments
+Authorization: Bearer {{token}}
+
+### 12. Get Student Assignments by Assignment
+GET {{baseUrl}}/assignments/student-assignments?assignmentId=REPLACE_WITH_ACTUAL_ID
+Authorization: Bearer {{token}}
+
+### 13. Get Student Assignments by Student
+GET {{baseUrl}}/assignments/student-assignments?studentId={{studentId}}
+Authorization: Bearer {{token}}
+
+### 14. Get Student Assignments by Status
+GET {{baseUrl}}/assignments/student-assignments?status=PENDING
+Authorization: Bearer {{token}}
+
+### 15. Get Submitted Student Assignments
+GET {{baseUrl}}/assignments/student-assignments?submitted=true
+Authorization: Bearer {{token}}
+
+### 16. Get Specific Student Assignment
+GET {{baseUrl}}/assignments/student-assignments/REPLACE_WITH_ACTUAL_ID
+Authorization: Bearer {{token}}
+
+### 17. Submit Student Assignment
+PATCH {{baseUrl}}/assignments/student-assignments/REPLACE_WITH_ACTUAL_ID
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "submittedAt": "2025-10-28T10:30:00.000Z",
+  "status": "SUBMITTED"
+}
+
+### 18. Grade Student Assignment
+PATCH {{baseUrl}}/assignments/student-assignments/REPLACE_WITH_ACTUAL_ID
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "marksObtained": 85,
+  "status": "GRADED"
+}
+
+### 19. Bulk Grade Assignments
+POST {{baseUrl}}/assignments/student-assignments/bulk-grade
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "studentAssignmentIds": ["STUDENT_ASSIGNMENT_ID_1", "STUDENT_ASSIGNMENT_ID_2"],
+  "marksObtained": [85, 92]
+}
+
+### 20. Get Assignment Statistics
+GET {{baseUrl}}/assignments/stats
+Authorization: Bearer {{token}}
+
+### 21. Get Assignment Summary
+GET {{baseUrl}}/assignments/summary
+Authorization: Bearer {{token}}
+
+### 22. Get Assignment Summary with Date Range
+GET {{baseUrl}}/assignments/summary?startDate=2025-10-01&endDate=2025-11-30
+Authorization: Bearer {{token}}
+
+### 23. Get Student Assignment Statistics
+GET {{baseUrl}}/assignments/student/{{studentId}}/stats
+Authorization: Bearer {{token}}
+
+### 24. Get Student Assignments
+GET {{baseUrl}}/assignments/student/{{studentId}}
+Authorization: Bearer {{token}}
+
+### 25. Get Class Assignment Statistics
+GET {{baseUrl}}/assignments/class/{{classId}}/stats
+Authorization: Bearer {{token}}
+
+### 26. Test Duplicate Student Assignment (Should Fail)
+POST {{baseUrl}}/assignments/student-assignments
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "assignmentId": "REPLACE_WITH_ACTUAL_ASSIGNMENT_ID",
+  "studentId": "{{studentId}}"
+}
+
+### 27. Test Non-existent Assignment (Should Fail)
+POST {{baseUrl}}/assignments/student-assignments
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "assignmentId": "00000000-0000-0000-0000-000000000000",
+  "studentId": "{{studentId}}"
+}
+
+### 28. Test Non-existent Student (Should Fail)
+POST {{baseUrl}}/assignments/student-assignments
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "assignmentId": "REPLACE_WITH_ACTUAL_ASSIGNMENT_ID",
+  "studentId": "00000000-0000-0000-0000-000000000000"
+}
+
+### 29. Test Unauthorized Access (Should Fail)
+GET {{baseUrl}}/assignments
+
+### 30. Delete Student Assignment
+DELETE {{baseUrl}}/assignments/student-assignments/REPLACE_WITH_ACTUAL_ID
+Authorization: Bearer {{token}}
+
+### 31. Delete Assignment
+DELETE {{baseUrl}}/assignments/REPLACE_WITH_ACTUAL_ID
+Authorization: Bearer {{token}}
+
+### 32. Verify Deletion - Get Stats
+GET {{baseUrl}}/assignments/stats
+Authorization: Bearer {{token}}

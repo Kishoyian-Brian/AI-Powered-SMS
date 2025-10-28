@@ -1,0 +1,200 @@
+### Attendance Module API Tests
+### Base URL: http://localhost:3000
+
+### Variables
+@baseUrl = http://localhost:3000
+@token = YOUR_ADMIN_TOKEN_HERE
+@studentId = STUDENT_ID_HERE
+@classId = CLASS_ID_HERE
+
+### 1. Create Single Attendance Record
+POST {{baseUrl}}/attendance
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "studentId": "{{studentId}}",
+  "classId": "{{classId}}",
+  "date": "2025-10-28T00:00:00.000Z",
+  "status": "PRESENT"
+}
+
+### 2. Create Another Attendance Record (Absent)
+POST {{baseUrl}}/attendance
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "studentId": "{{studentId}}",
+  "classId": "{{classId}}",
+  "date": "2025-10-29T00:00:00.000Z",
+  "status": "ABSENT"
+}
+
+### 3. Create Third Attendance Record (Late)
+POST {{baseUrl}}/attendance
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "studentId": "{{studentId}}",
+  "classId": "{{classId}}",
+  "date": "2025-10-30T00:00:00.000Z",
+  "status": "LATE"
+}
+
+### 4. Bulk Create Attendance Records
+POST {{baseUrl}}/attendance/bulk
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "classId": "{{classId}}",
+  "date": "2025-10-31T00:00:00.000Z",
+  "attendanceRecords": [
+    {
+      "studentId": "{{studentId}}",
+      "status": "PRESENT"
+    },
+    {
+      "studentId": "ANOTHER_STUDENT_ID",
+      "status": "ABSENT"
+    },
+    {
+      "studentId": "THIRD_STUDENT_ID",
+      "status": "LATE"
+    }
+  ]
+}
+
+### 5. Get All Attendance Records
+GET {{baseUrl}}/attendance
+Authorization: Bearer {{token}}
+
+### 6. Get Attendance Records with Pagination
+GET {{baseUrl}}/attendance?page=1&limit=5
+Authorization: Bearer {{token}}
+
+### 7. Get Attendance Records by Student
+GET {{baseUrl}}/attendance?studentId={{studentId}}
+Authorization: Bearer {{token}}
+
+### 8. Get Attendance Records by Class
+GET {{baseUrl}}/attendance?classId={{classId}}
+Authorization: Bearer {{token}}
+
+### 9. Get Attendance Records by Date
+GET {{baseUrl}}/attendance?date=2025-10-28
+Authorization: Bearer {{token}}
+
+### 10. Get Attendance Records by Status
+GET {{baseUrl}}/attendance?status=PRESENT
+Authorization: Bearer {{token}}
+
+### 11. Get Attendance Records by Date Range
+GET {{baseUrl}}/attendance?startDate=2025-10-28&endDate=2025-10-31
+Authorization: Bearer {{token}}
+
+### 12. Get Overall Attendance Statistics
+GET {{baseUrl}}/attendance/stats
+Authorization: Bearer {{token}}
+
+### 13. Get Attendance Statistics for Date Range
+GET {{baseUrl}}/attendance/stats?startDate=2025-10-28&endDate=2025-10-31
+Authorization: Bearer {{token}}
+
+### 14. Get Attendance Summary
+GET {{baseUrl}}/attendance/summary?startDate=2025-10-28&endDate=2025-10-31
+Authorization: Bearer {{token}}
+
+### 15. Get Student Attendance Records
+GET {{baseUrl}}/attendance/student/{{studentId}}
+Authorization: Bearer {{token}}
+
+### 16. Get Student Attendance Records for Date Range
+GET {{baseUrl}}/attendance/student/{{studentId}}?startDate=2025-10-28&endDate=2025-10-31
+Authorization: Bearer {{token}}
+
+### 17. Get Student Attendance Statistics
+GET {{baseUrl}}/attendance/student/{{studentId}}/stats
+Authorization: Bearer {{token}}
+
+### 18. Get Student Attendance Statistics for Date Range
+GET {{baseUrl}}/attendance/student/{{studentId}}/stats?startDate=2025-10-28&endDate=2025-10-31
+Authorization: Bearer {{token}}
+
+### 19. Get Class Attendance Records
+GET {{baseUrl}}/attendance/class/{{classId}}
+Authorization: Bearer {{token}}
+
+### 20. Get Class Attendance Records for Specific Date
+GET {{baseUrl}}/attendance/class/{{classId}}?date=2025-10-28
+Authorization: Bearer {{token}}
+
+### 21. Get Class Attendance Statistics
+GET {{baseUrl}}/attendance/class/{{classId}}/stats
+Authorization: Bearer {{token}}
+
+### 22. Get Class Attendance Statistics for Date Range
+GET {{baseUrl}}/attendance/class/{{classId}}/stats?startDate=2025-10-28&endDate=2025-10-31
+Authorization: Bearer {{token}}
+
+### 23. Get Specific Attendance Record
+GET {{baseUrl}}/attendance/REPLACE_WITH_ACTUAL_ID
+Authorization: Bearer {{token}}
+
+### 24. Update Attendance Record
+PATCH {{baseUrl}}/attendance/REPLACE_WITH_ACTUAL_ID
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "status": "ABSENT"
+}
+
+### 25. Test Duplicate Attendance Record (Should Fail)
+POST {{baseUrl}}/attendance
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "studentId": "{{studentId}}",
+  "classId": "{{classId}}",
+  "date": "2025-10-28T00:00:00.000Z",
+  "status": "PRESENT"
+}
+
+### 26. Test Non-existent Student (Should Fail)
+POST {{baseUrl}}/attendance
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "studentId": "00000000-0000-0000-0000-000000000000",
+  "classId": "{{classId}}",
+  "date": "2025-10-28T00:00:00.000Z",
+  "status": "PRESENT"
+}
+
+### 27. Test Non-existent Class (Should Fail)
+POST {{baseUrl}}/attendance
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "studentId": "{{studentId}}",
+  "classId": "00000000-0000-0000-0000-000000000000",
+  "date": "2025-10-28T00:00:00.000Z",
+  "status": "PRESENT"
+}
+
+### 28. Test Unauthorized Access (Should Fail)
+GET {{baseUrl}}/attendance
+
+### 29. Delete Attendance Record
+DELETE {{baseUrl}}/attendance/REPLACE_WITH_ACTUAL_ID
+Authorization: Bearer {{token}}
+
+### 30. Verify Deletion - Get Stats
+GET {{baseUrl}}/attendance/stats
+Authorization: Bearer {{token}}
