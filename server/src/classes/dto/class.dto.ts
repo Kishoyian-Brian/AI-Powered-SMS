@@ -1,19 +1,10 @@
-import { IsString, IsNotEmpty, IsEmail, IsOptional, IsNumber, MinLength } from 'class-validator';
+import { IsString, IsNotEmpty, IsOptional, IsNumber, IsUUID } from 'class-validator';
 import { Transform, Type } from 'class-transformer';
 
-export class CreateTeacherDto {
+export class CreateClassDto {
   @IsString()
   @IsNotEmpty()
   name: string;
-
-  @IsString()
-  @IsNotEmpty()
-  @IsEmail()
-  email: string;
-
-  @IsString()
-  @IsNotEmpty()
-  phone: string;
 
   @IsString()
   @IsNotEmpty()
@@ -21,22 +12,17 @@ export class CreateTeacherDto {
 
   @IsString()
   @IsNotEmpty()
-  experience: string;
+  schedule: string;
 
-  @IsString()
-  @IsNotEmpty()
-  @MinLength(6)
-  password: string;
+  @IsOptional()
+  @IsUUID()
+  teacherId?: string;
 }
 
-export class UpdateTeacherDto {
+export class UpdateClassDto {
   @IsString()
   @IsOptional()
   name?: string;
-
-  @IsString()
-  @IsOptional()
-  phone?: string;
 
   @IsString()
   @IsOptional()
@@ -44,10 +30,14 @@ export class UpdateTeacherDto {
 
   @IsString()
   @IsOptional()
-  experience?: string;
+  schedule?: string;
+
+  @IsOptional()
+  @IsUUID()
+  teacherId?: string;
 }
 
-export class TeacherQueryDto {
+export class ClassQueryDto {
   @IsOptional()
   @Type(() => Number)
   @IsNumber()
@@ -66,7 +56,7 @@ export class TeacherQueryDto {
   @IsOptional()
   subject?: string;
 
-  @IsString()
   @IsOptional()
-  experience?: string;
+  @IsUUID()
+  teacherId?: string;
 }

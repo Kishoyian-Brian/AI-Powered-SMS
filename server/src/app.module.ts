@@ -10,6 +10,11 @@ import { AuthModule } from './auth/auth.module';
 import { EmailModule } from './email/email.module';
 import { StudentsModule } from './students/students.module';
 import { TeachersModule } from './teachers/teachers.module';
+import { ClassesModule } from './classes/classes.module';
+import { AttendanceModule } from './attendance/attendance.module';
+import { AssignmentsModule } from './assignments/assignments.module';
+import { GradesModule } from './grades/grades.module';
+import { ReportsModule } from './reports/reports.module';
 
 @Module({
   imports: [
@@ -36,6 +41,11 @@ import { TeachersModule } from './teachers/teachers.module';
     AuthModule,
     StudentsModule,
     TeachersModule,
+    ClassesModule,
+    AttendanceModule,
+    AssignmentsModule,
+    GradesModule,
+    ReportsModule,
   ],
   controllers: [AppController],
   providers: [

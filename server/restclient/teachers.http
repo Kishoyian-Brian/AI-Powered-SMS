@@ -1,9 +1,9 @@
 ### Teachers Module API Tests
-### Base URL: http://localhost:3002
+### Base URL: http://localhost:3000
 
 ### Variables
-@baseUrl = http://localhost:3002
-@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im1heG1pbGxpYW5tdWlydXJpQGdtYWlsLmNvbSIsInN1YiI6IjM4N2Q2NWNmLTVlYTctNGI3Ni05MmYwLWNjNTliNGM2YzY3NSIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc2MTE1ODAyMiwiZXhwIjoxNzYxMTU4OTIyfQ.ZMgAo04_LfHccXocqghA9LAgqvTchV4TLtuRKt4EjT8
+@baseUrl = http://localhost:3000
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWluQHNtcy5jb20iLCJzdWIiOiI3ZDczMzQyMy1jMjcxLTQ0NGQtOWRmZS03NWE3NTVlOTkzZGQiLCJyb2xlIjoiQURNSU4iLCJpYXQiOjE3NjE1ODgwNDEsImV4cCI6MTc2MTU4ODk0MX0.vuM-Unb_QOFfoUcTAyyuZr79vzGx7l3pBpfcffoGU44
 
 ### 1. Create Teacher
 POST {{baseUrl}}/teachers

@@ -1,0 +1,130 @@
+### Classes Module API Tests
+### Base URL: http://localhost:3000
+
+### Variables
+@baseUrl = http://localhost:3000
+@token = YOUR_ADMIN_TOKEN_HERE
+
+### 1. Create Class
+POST {{baseUrl}}/classes
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "name": "Mathematics 101",
+  "subject": "Mathematics",
+  "schedule": "Monday, Wednesday, Friday 9:00 AM - 10:00 AM",
+  "teacherId": "TEACHER_ID_HERE"
+}
+
+### 2. Create Another Class
+POST {{baseUrl}}/classes
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "name": "Physics 201",
+  "subject": "Physics",
+  "schedule": "Tuesday, Thursday 2:00 PM - 3:00 PM",
+  "teacherId": "TEACHER_ID_HERE"
+}
+
+### 3. Create Third Class
+POST {{baseUrl}}/classes
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "name": "English Literature",
+  "subject": "English",
+  "schedule": "Monday, Wednesday 11:00 AM - 12:00 PM"
+}
+
+### 4. Get All Classes
+GET {{baseUrl}}/classes
+Authorization: Bearer {{token}}
+
+### 5. Get Classes with Pagination
+GET {{baseUrl}}/classes?page=1&limit=2
+Authorization: Bearer {{token}}
+
+### 6. Search Classes by Name
+GET {{baseUrl}}/classes?search=Mathematics
+Authorization: Bearer {{token}}
+
+### 7. Search Classes by Subject
+GET {{baseUrl}}/classes?subject=Mathematics
+Authorization: Bearer {{token}}
+
+### 8. Get Class Statistics
+GET {{baseUrl}}/classes/stats
+Authorization: Bearer {{token}}
+
+### 9. Get Classes by Subject
+GET {{baseUrl}}/classes/subject/Mathematics
+Authorization: Bearer {{token}}
+
+### 10. Get Classes by Teacher
+GET {{baseUrl}}/classes/teacher/TEACHER_ID_HERE
+Authorization: Bearer {{token}}
+
+### 11. Get Class by ID (replace with actual ID from create response)
+GET {{baseUrl}}/classes/REPLACE_WITH_ACTUAL_ID
+Authorization: Bearer {{token}}
+
+### 12. Get Class by Name
+GET {{baseUrl}}/classes/name/Mathematics 101
+Authorization: Bearer {{token}}
+
+### 13. Get Students in Class
+GET {{baseUrl}}/classes/REPLACE_WITH_ACTUAL_ID/students
+Authorization: Bearer {{token}}
+
+### 14. Update Class (replace with actual ID)
+PATCH {{baseUrl}}/classes/REPLACE_WITH_ACTUAL_ID
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "name": "Advanced Mathematics 101",
+  "schedule": "Monday, Wednesday, Friday 9:00 AM - 10:30 AM"
+}
+
+### 15. Assign Teacher to Class
+PATCH {{baseUrl}}/classes/REPLACE_WITH_ACTUAL_ID/assign-teacher
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "teacherId": "TEACHER_ID_HERE"
+}
+
+### 16. Remove Teacher from Class
+PATCH {{baseUrl}}/classes/REPLACE_WITH_ACTUAL_ID/remove-teacher
+Authorization: Bearer {{token}}
+
+### 17. Test Duplicate Class Error
+POST {{baseUrl}}/classes
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "name": "Mathematics 101",
+  "subject": "Mathematics",
+  "schedule": "Different schedule"
+}
+
+### 18. Test Non-existent Class
+GET {{baseUrl}}/classes/00000000-0000-0000-0000-000000000000
+Authorization: Bearer {{token}}
+
+### 19. Test Unauthorized Access (without token)
+GET {{baseUrl}}/classes
+
+### 20. Delete Class (replace with actual ID)
+DELETE {{baseUrl}}/classes/REPLACE_WITH_ACTUAL_ID
+Authorization: Bearer {{token}}
+
+### 21. Verify Class Deletion - Get Stats
+GET {{baseUrl}}/classes/stats
+Authorization: Bearer {{token}}

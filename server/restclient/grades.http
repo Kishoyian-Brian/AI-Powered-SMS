@@ -1,0 +1,239 @@
+### Grades Module API Tests
+### Base URL: http://localhost:3000
+
+### Variables
+@baseUrl = http://localhost:3000
+@token = YOUR_ADMIN_TOKEN_HERE
+@studentId = STUDENT_ID_HERE
+@classId = CLASS_ID_HERE
+
+### 1. Create Grade
+POST {{baseUrl}}/grades
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "studentId": "{{studentId}}",
+  "subject": "Mathematics",
+  "examType": "Midterm",
+  "marks": 85,
+  "totalMarks": 100,
+  "remarks": "Excellent performance",
+  "examDate": "2025-10-15T00:00:00.000Z"
+}
+
+### 2. Create Another Grade
+POST {{baseUrl}}/grades
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "studentId": "{{studentId}}",
+  "subject": "Physics",
+  "examType": "Final",
+  "marks": 92,
+  "totalMarks": 100,
+  "remarks": "Outstanding work",
+  "examDate": "2025-10-20T00:00:00.000Z"
+}
+
+### 3. Create Third Grade
+POST {{baseUrl}}/grades
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "studentId": "{{studentId}}",
+  "subject": "Mathematics",
+  "examType": "Quiz",
+  "marks": 78,
+  "totalMarks": 100,
+  "remarks": "Good effort",
+  "examDate": "2025-10-25T00:00:00.000Z"
+}
+
+### 4. Get All Grades
+GET {{baseUrl}}/grades
+Authorization: Bearer {{token}}
+
+### 5. Get Grades with Pagination
+GET {{baseUrl}}/grades?page=1&limit=5
+Authorization: Bearer {{token}}
+
+### 6. Get Grades by Student
+GET {{baseUrl}}/grades?studentId={{studentId}}
+Authorization: Bearer {{token}}
+
+### 7. Get Grades by Subject
+GET {{baseUrl}}/grades?subject=Mathematics
+Authorization: Bearer {{token}}
+
+### 8. Get Grades by Exam Type
+GET {{baseUrl}}/grades?examType=Midterm
+Authorization: Bearer {{token}}
+
+### 9. Get Grades by Grade
+GET {{baseUrl}}/grades?grade=A
+Authorization: Bearer {{token}}
+
+### 10. Get Grades by Date Range
+GET {{baseUrl}}/grades?startDate=2025-10-01&endDate=2025-10-31
+Authorization: Bearer {{token}}
+
+### 11. Get Specific Grade
+GET {{baseUrl}}/grades/REPLACE_WITH_ACTUAL_ID
+Authorization: Bearer {{token}}
+
+### 12. Update Grade
+PATCH {{baseUrl}}/grades/REPLACE_WITH_ACTUAL_ID
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "marks": 88,
+  "remarks": "Updated remarks"
+}
+
+### 13. Bulk Create Grades
+POST {{baseUrl}}/grades/bulk
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "grades": [
+    {
+      "studentId": "{{studentId}}",
+      "subject": "Chemistry",
+      "examType": "Lab",
+      "marks": 90,
+      "totalMarks": 100,
+      "remarks": "Excellent lab work",
+      "examDate": "2025-10-30T00:00:00.000Z"
+    },
+    {
+      "studentId": "{{studentId}}",
+      "subject": "Biology",
+      "examType": "Assignment",
+      "marks": 95,
+      "totalMarks": 100,
+      "remarks": "Perfect assignment",
+      "examDate": "2025-11-01T00:00:00.000Z"
+    }
+  ]
+}
+
+### 14. Bulk Update Grades
+PATCH {{baseUrl}}/grades/bulk
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "gradeIds": ["GRADE_ID_1", "GRADE_ID_2"],
+  "updates": [
+    {
+      "marks": 95,
+      "remarks": "Updated to excellent"
+    },
+    {
+      "marks": 88,
+      "remarks": "Updated to very good"
+    }
+  ]
+}
+
+### 15. Get Grade Statistics
+GET {{baseUrl}}/grades/stats
+Authorization: Bearer {{token}}
+
+### 16. Get Grade Summary
+GET {{baseUrl}}/grades/summary
+Authorization: Bearer {{token}}
+
+### 17. Get Grade Summary with Date Range
+GET {{baseUrl}}/grades/summary?startDate=2025-10-01&endDate=2025-11-30
+Authorization: Bearer {{token}}
+
+### 18. Get Grade Distribution
+GET {{baseUrl}}/grades/distribution
+Authorization: Bearer {{token}}
+
+### 19. Get Grade Distribution by Subject
+GET {{baseUrl}}/grades/distribution?subject=Mathematics
+Authorization: Bearer {{token}}
+
+### 20. Get Grade Distribution by Exam Type
+GET {{baseUrl}}/grades/distribution?examType=Midterm
+Authorization: Bearer {{token}}
+
+### 21. Get Student Grades
+GET {{baseUrl}}/grades/student/{{studentId}}
+Authorization: Bearer {{token}}
+
+### 22. Get Student Grade Statistics
+GET {{baseUrl}}/grades/student/{{studentId}}/stats
+Authorization: Bearer {{token}}
+
+### 23. Get Grades by Subject
+GET {{baseUrl}}/grades/subject/Mathematics
+Authorization: Bearer {{token}}
+
+### 24. Get Subject Grade Statistics
+GET {{baseUrl}}/grades/subject/Mathematics/stats
+Authorization: Bearer {{token}}
+
+### 25. Get Grades by Exam Type
+GET {{baseUrl}}/grades/exam-type/Midterm
+Authorization: Bearer {{token}}
+
+### 26. Get Class Grade Statistics
+GET {{baseUrl}}/grades/class/{{classId}}/stats
+Authorization: Bearer {{token}}
+
+### 27. Calculate Grade
+POST {{baseUrl}}/grades/calculate
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "marks": 87,
+  "totalMarks": 100
+}
+
+### 28. Test Invalid Marks (Should Fail)
+POST {{baseUrl}}/grades
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "studentId": "{{studentId}}",
+  "subject": "Mathematics",
+  "examType": "Test",
+  "marks": 150,
+  "totalMarks": 100,
+  "examDate": "2025-10-15T00:00:00.000Z"
+}
+
+### 29. Test Non-existent Student (Should Fail)
+POST {{baseUrl}}/grades
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "studentId": "00000000-0000-0000-0000-000000000000",
+  "subject": "Mathematics",
+  "examType": "Test",
+  "marks": 85,
+  "totalMarks": 100,
+  "examDate": "2025-10-15T00:00:00.000Z"
+}
+
+### 30. Test Unauthorized Access (Should Fail)
+GET {{baseUrl}}/grades
+
+### 31. Delete Grade
+DELETE {{baseUrl}}/grades/REPLACE_WITH_ACTUAL_ID
+Authorization: Bearer {{token}}
+
+### 32. Verify Deletion - Get Stats
+GET {{baseUrl}}/grades/stats
+Authorization: Bearer {{token}}

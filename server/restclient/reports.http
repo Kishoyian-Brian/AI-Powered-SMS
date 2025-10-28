@@ -1,0 +1,221 @@
+### Reports Module Testing
+@baseUrl = http://localhost:3000
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWluQHNtcy5jb20iLCJzdWIiOiI3ZDczMzQyMy1jMjcxLTQ0NGQtOWRmZS03NWE3NTVlOTkzZGQiLCJyb2xlIjoiQURNSU4iLCJpYXQiOjE3NjE2MTQ4NjQsImV4cCI6MTc2MTYxNTc2NH0.r-zH2QKQ-lZjqOlESRg-qstlzsjaHuUpWE9B7F7W9G0
+
+### 1. Generate Attendance Report
+POST {{baseUrl}}/reports/generate
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "title": "Monthly Attendance Report - October 2025",
+  "type": "ATTENDANCE",
+  "filters": {
+    "startDate": "2025-10-01",
+    "endDate": "2025-10-31"
+  },
+  "format": {
+    "type": "JSON",
+    "includeCharts": true,
+    "includeSummary": true,
+    "includeDetails": true
+  }
+}
+
+### 2. Generate Performance Report
+POST {{baseUrl}}/reports/generate
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "title": "Student Performance Report - Q4 2025",
+  "type": "PERFORMANCE",
+  "filters": {
+    "startDate": "2025-10-01",
+    "endDate": "2025-12-31",
+    "subject": "Mathematics"
+  },
+  "format": {
+    "type": "PDF",
+    "includeCharts": true,
+    "includeSummary": true,
+    "includeDetails": true
+  }
+}
+
+### 3. Generate Teacher Report
+POST {{baseUrl}}/reports/generate
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "title": "Teacher Performance Report",
+  "type": "TEACHER",
+  "filters": {
+    "subject": "Mathematics"
+  },
+  "format": {
+    "type": "EXCEL",
+    "includeCharts": false,
+    "includeSummary": true,
+    "includeDetails": true
+  }
+}
+
+### 4. Generate Student Report
+POST {{baseUrl}}/reports/generate
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "title": "Student Comprehensive Report",
+  "type": "STUDENT",
+  "filters": {
+    "classId": "class-id-here"
+  },
+  "format": {
+    "type": "CSV",
+    "includeCharts": false,
+    "includeSummary": true,
+    "includeDetails": true
+  }
+}
+
+### 5. Generate Monthly Report
+POST {{baseUrl}}/reports/generate
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "title": "October 2025 Monthly Report",
+  "type": "MONTHLY",
+  "filters": {
+    "month": 10,
+    "year": 2025
+  },
+  "format": {
+    "type": "PDF",
+    "includeCharts": true,
+    "includeSummary": true,
+    "includeDetails": true
+  }
+}
+
+### 6. Generate AI Report
+POST {{baseUrl}}/reports/generate
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "title": "AI Insights Report",
+  "type": "AI",
+  "filters": {
+    "focus": "performance",
+    "startDate": "2025-10-01",
+    "endDate": "2025-10-31"
+  },
+  "format": {
+    "type": "JSON",
+    "includeCharts": true,
+    "includeSummary": true,
+    "includeDetails": true
+  }
+}
+
+### 7. List All Reports
+GET {{baseUrl}}/reports
+Authorization: Bearer {{token}}
+
+### 8. List Reports with Pagination
+GET {{baseUrl}}/reports?page=1&limit=5
+Authorization: Bearer {{token}}
+
+### 9. Filter Reports by Type
+GET {{baseUrl}}/reports?type=ATTENDANCE
+Authorization: Bearer {{token}}
+
+### 10. Filter Reports by Date Range
+GET {{baseUrl}}/reports?startDate=2025-10-01&endDate=2025-10-31
+Authorization: Bearer {{token}}
+
+### 11. Search Reports by Title
+GET {{baseUrl}}/reports?title=attendance
+Authorization: Bearer {{token}}
+
+### 12. Get Report Statistics
+GET {{baseUrl}}/reports/stats
+Authorization: Bearer {{token}}
+
+### 13. Get Specific Report
+GET {{baseUrl}}/reports/{{reportId}}
+Authorization: Bearer {{token}}
+
+### 14. Delete Report (Admin only)
+DELETE {{baseUrl}}/reports/{{reportId}}
+Authorization: Bearer {{token}}
+
+### 15. Generate Attendance Report (Direct)
+GET {{baseUrl}}/reports/attendance?startDate=2025-10-01&endDate=2025-10-31
+Authorization: Bearer {{token}}
+
+### 16. Generate Performance Report (Direct)
+GET {{baseUrl}}/reports/performance?startDate=2025-10-01&endDate=2025-10-31&subject=Mathematics
+Authorization: Bearer {{token}}
+
+### 17. Generate Teacher Report (Direct)
+GET {{baseUrl}}/reports/teacher?subject=Mathematics
+Authorization: Bearer {{token}}
+
+### 18. Generate Student Report (Direct)
+GET {{baseUrl}}/reports/student?classId=class-id-here
+Authorization: Bearer {{token}}
+
+### 19. Generate Monthly Report (Direct)
+GET {{baseUrl}}/reports/monthly?month=10&year=2025
+Authorization: Bearer {{token}}
+
+### 20. Generate AI Report (Direct)
+GET {{baseUrl}}/reports/ai?focus=performance&startDate=2025-10-01&endDate=2025-10-31
+Authorization: Bearer {{token}}
+
+### 21. Test Unauthorized Access
+GET {{baseUrl}}/reports
+
+### 22. Test Invalid Report Type
+POST {{baseUrl}}/reports/generate
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "title": "Invalid Report",
+  "type": "INVALID_TYPE",
+  "format": {
+    "type": "JSON"
+  }
+}
+
+### 23. Test Invalid Format Type
+POST {{baseUrl}}/reports/generate
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "title": "Invalid Format Report",
+  "type": "ATTENDANCE",
+  "format": {
+    "type": "INVALID_FORMAT"
+  }
+}
+
+### 24. Test Missing Required Fields
+POST {{baseUrl}}/reports/generate
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "type": "ATTENDANCE"
+}
+
+### 25. Test Student Access (Limited)
+GET {{baseUrl}}/reports/student
+Authorization: Bearer {{studentToken}}
